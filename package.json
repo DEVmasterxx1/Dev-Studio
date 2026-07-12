@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "backend": "node backend/server.js",
-  "frontend": "npm --prefix frontend run dev",
-  "dev": "concurrently \"npm run backend\" \"npm run frontend\""
-},
+    "backend": "npx tsx backend/src/server.ts",
+    "frontend": "npm --prefix frontend run dev",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DEVmasterxx1/Dev-Studio.git"
