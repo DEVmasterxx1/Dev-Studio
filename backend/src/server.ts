@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
 import testRoutes from "./routes/test";
+import { connectDB } from "./db/connect";
 
 const app = express();
+connectDB();
 
 // Middleware
 app.use(cors());
