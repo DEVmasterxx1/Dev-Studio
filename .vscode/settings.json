@@ -1,0 +1,5 @@
+{
+  "openai.apiBaseUrl": "http://localhost:11434/v1",
+  "openai.apiKey": "local-placeholder",
+  "editor.formatOnSave": true
+}

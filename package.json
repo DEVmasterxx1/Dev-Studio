@@ -1,0 +1,29 @@
+{
+  "name": "dev-studio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "backend": "node backend/server.js",
+  "frontend": "npm --prefix frontend run dev",
+  "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DEVmasterxx1/Dev-Studio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DEVmasterxx1/Dev-Studio/issues"
+  },
+  "homepage": "https://github.com/DEVmasterxx1/Dev-Studio#readme",
+  "dependencies": {
+    "react": "^19.2.7"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
