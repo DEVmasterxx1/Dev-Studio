@@ -9,14 +9,9 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-      });
-
+      const response = await api.post("/auth/login", { email, password });
       const token = response.data.token;
       localStorage.setItem("token", token);
-
       window.location.href = "/dashboard";
     } catch (err: any) {
       console.error("Login failed:", err.response?.data || err.message);
@@ -26,7 +21,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-      <div className="w-full max-w-sm space-y-6">
+      <div className="w-full max-w-sm space-y-6 p-8">
         <h1 className="text-3xl font-bold text-center">Login</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -38,6 +33,8 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 rounded bg-gray-800 border border-gray-700"
+            required
+            autoComplete="email"
           />
 
           <input
@@ -48,12 +45,11 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 rounded bg-gray-800 border border-gray-700"
+            required
+            autoComplete="current-password"
           />
 
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded"
-          >
+          <button type="submit" className="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded">
             Sign In
           </button>
         </form>
@@ -68,4 +64,3 @@ export default function Login() {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api";
-import CopyToken from "../components/CopyToken";
 
 type Project = {
   _id: string;
@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
@@ -33,9 +34,7 @@ export default function Dashboard() {
 
     try {
       setDeletingId(id);
-      // Call backend delete endpoint
       await api.delete(`/projects/${id}`);
-      // Remove from local state
       setProjects((prev) => prev.filter((p) => p._id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
@@ -45,13 +44,28 @@ export default function Dashboard() {
     }
   }
 
+  function handleLogout() {
+    // Clear token and any other client-side auth state, then navigate to login
+    localStorage.removeItem("token");
+    // If you store other user state in localStorage/sessionStorage, clear it here
+    // localStorage.removeItem("user");
+    navigate("/login");
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-4xl mx-auto">
         <header className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Dashboard</h1>
+
           <div className="flex items-center gap-3">
-            <CopyToken />
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1 bg-gray-700 rounded text-white hover:bg-gray-600"
+              title="Logout"
+            >
+              Logout
+            </button>
           </div>
         </header>
 
