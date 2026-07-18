@@ -31,6 +31,8 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
+            id="email"
+            name="email"
             type="email"
             placeholder="Email"
             value={email}
@@ -39,6 +41,8 @@ export default function Login() {
           />
 
           <input
+            id="password"
+            name="password"
             type="password"
             placeholder="Password"
             value={password}

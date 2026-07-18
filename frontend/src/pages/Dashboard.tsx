@@ -1,87 +1,90 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api } from "../api";
+import CopyToken from "../components/CopyToken";
+
+type Project = {
+  _id: string;
+  name: string;
+  description?: string;
+};
 
 export default function Dashboard() {
-  const [projects, setProjects] = useState<any[]>([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
-  async function loadProjects() {
-    const response = await api.get("/projects");
-    setProjects(response.data);
-  }
-
-  async function createProject(e: React.FormEvent) {
-    e.preventDefault();
-
-    await api.post("/projects", {
-      title,
-      description,
-    });
-
-    setTitle("");
-    setDescription("");
-    loadProjects();
-  }
-
-  async function deleteProject(id: string) {
-    await api.delete(`/projects/${id}`);
-    loadProjects();
-  }
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    loadProjects();
+    async function load() {
+      try {
+        const res = await api.get("/projects");
+        setProjects(res.data || []);
+      } catch (err) {
+        console.error("Failed to load projects:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
   }, []);
+
+  async function handleDelete(id: string) {
+    const ok = window.confirm("Delete this project? This action cannot be undone.");
+    if (!ok) return;
+
+    try {
+      setDeletingId(id);
+      // Call backend delete endpoint
+      await api.delete(`/projects/${id}`);
+      // Remove from local state
+      setProjects((prev) => prev.filter((p) => p._id !== id));
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete project. Check console for details.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-3xl font-bold mb-6">Your Projects</h1>
-
-      <form onSubmit={createProject} className="space-y-4 mb-8">
-        <input
-          type="text"
-          placeholder="Project Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-4 py-2 rounded bg-gray-800 border border-gray-700"
-        />
-
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-4 py-2 rounded bg-gray-800 border border-gray-700"
-        />
-
-        <button
-          type="submit"
-          className="w-full py-2 bg-green-600 hover:bg-green-700 rounded"
-        >
-          Create Project
-        </button>
-      </form>
-
-      <div className="space-y-4">
-        {projects.map((project) => (
-          <div
-            key={project._id}
-            className="p-4 bg-gray-800 rounded border border-gray-700 flex justify-between"
-          >
-            <div>
-              <h2 className="text-xl font-bold">{project.title}</h2>
-              <p className="text-gray-400">{project.description}</p>
-            </div>
-
-            <button
-              onClick={() => deleteProject(project._id)}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
-            >
-              Delete
-            </button>
+      <div className="max-w-4xl mx-auto">
+        <header className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <div className="flex items-center gap-3">
+            <CopyToken />
           </div>
-        ))}
+        </header>
+
+        <section>
+          {loading ? (
+            <p className="text-gray-400">Loading projects…</p>
+          ) : projects.length === 0 ? (
+            <p className="text-gray-400">No projects found.</p>
+          ) : (
+            <ul className="space-y-3">
+              {projects.map((p) => (
+                <li key={p._id} className="p-4 bg-gray-800 rounded flex items-start justify-between">
+                  <div>
+                    <div className="font-semibold">{p.name}</div>
+                    <div className="text-sm text-gray-400">{p.description}</div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleDelete(p._id)}
+                      disabled={deletingId === p._id}
+                      className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-white"
+                      title="Delete project"
+                    >
+                      {deletingId === p._id ? "Deleting…" : "Delete"}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   );
 }
-
