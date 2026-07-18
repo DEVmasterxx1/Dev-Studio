@@ -1,20 +1,24 @@
 import express from "express";
 import cors from "cors";
-import testRoutes from "./routes/test";
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/user";
 import { connectDB } from "./db/connect";
+connectDB();
+import projectRoutes from "./routes/projects";
 
 const app = express();
-connectDB();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
+app.use("/api/user", userRoutes);
+app.use("/api/projects", projectRoutes);
 
-app.use("/api", testRoutes);
+// Load authentication routes
+app.use("/api/auth", authRoutes);
 
-// Test route
-app.get("/api", (req, res) => {
-    res.json({ message: "Hello from TypeScript backend with middleware!" });
+// Root test route
+app.get("/", (req, res) => {
+    res.send("Dev-Studio Backend Running");
 });
 
 app.listen(3001, () => {

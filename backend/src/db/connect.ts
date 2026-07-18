@@ -1,3 +1,14 @@
+import mongoose from "mongoose";
+
 export async function connectDB() {
-  console.log("Database connection placeholder — ready for MongoDB in Phase 4.");
+  try {
+    const uri = "mongodb://127.0.0.1:27017/devstudio";
+
+    await mongoose.connect(uri);
+    console.log("MongoDB connected successfully");
+  } catch (err) {
+    console.error("MongoDB connection failed:", err);
+    process.exit(1);
+  }
 }
+
